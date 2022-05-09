@@ -1,4 +1,5 @@
 using bookstore.Data;
+using bookstore.Data.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -26,6 +27,9 @@ namespace bookstore
         public void ConfigureServices(IServiceCollection services)
         {
             IServiceCollection serviceCollection = services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnectionString")));
+            services.AddScoped<IAutoriService, AutoriService>();
+            services.AddScoped<IEdituriService, EdituriService>();
+            services.AddScoped<ICartiService, CartiService>();
             services.AddControllersWithViews();
         }
 
@@ -53,8 +57,9 @@ namespace bookstore
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Carte}/{action=Index}/{id?}");
             });
-        }
+            AppDbInitializer.Seed(app);
+          }
     }
 }

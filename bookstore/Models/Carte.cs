@@ -1,4 +1,5 @@
 ﻿using bookstore.Data;
+using bookstore.Data.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace bookstore.Models
 {
-    public class Carte
+    public class Carte:IEntityBase
     {
         [Key]
         public int Id { get; set; }
