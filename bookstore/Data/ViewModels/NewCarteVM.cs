@@ -11,29 +11,30 @@ namespace bookstore.Models
 {
     public class NewCarteVM
     {
-        [Display(Description="Nume Carte")]
+        public int Id { get; set; }
+        [Display(Name="Nume Carte")]
         [Required(ErrorMessage ="Introduceti numele")]
         public string Name { get; set; }
-        [Display(Description = "Descriere Carte")]
+        [Display(Name = "Descriere Carte")]
         [Required(ErrorMessage = "Introduceti Descrierea")]
         public string Description { get; set; }
-        [Display(Description = "Pret in LEI")]
+        [Display(Name = "Preț")]
         [Required(ErrorMessage = "Introduceti pretul:")]
         public double Price { get; set; }
-        [Display(Description = "Poză Carte")]
+        [Display(Name = "Poză Carte")]
         [Required(ErrorMessage = "Introduceti poza")]
         public string ImageURL { get; set; }
-        [Display(Description = "Anul publicării")]
+        [Display(Name = "Anul publicării")]
         [Required(ErrorMessage = "Introduceti anul")]
         public DateTime StartDate { get; set; }
-        [Display(Description = "Selectează categoria")]
+        [Display(Name = "Selectează categoria")]
         [Required(ErrorMessage = "Trebuie să selectezi o categorie")]
         public BookCategory BookCategory  { get; set; }
-        [Display(Description = "Selectează autorul")]
+        [Display(Name = "Selectează autorul")]
         [Required(ErrorMessage = "Introduceti Autorul Cartii")]
 
         public List<int> AutorIds{ get; set; }
-        [Display(Description = "Selectează Editura")]
+        [Display(Name = "Selectează Editura")]
         [Required(ErrorMessage = "Selectează Editura")]
         public int EdituraId { get; set; }
 

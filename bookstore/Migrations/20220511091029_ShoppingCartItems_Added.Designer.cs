@@ -10,8 +10,8 @@ using bookstore.Data;
 namespace bookstore.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20220502132233_ChangeInfo")]
-    partial class ChangeInfo
+    [Migration("20220511091029_ShoppingCartItems_Added")]
+    partial class ShoppingCartItems_Added
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,12 +29,16 @@ namespace bookstore.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Bio")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("ProfilePictureURL")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -100,17 +104,89 @@ namespace bookstore.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("logo")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Edituri");
+                });
+
+            modelBuilder.Entity("bookstore.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("bookstore.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CarteId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<double>("Price")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarteId");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
+                });
+
+            modelBuilder.Entity("bookstore.Models.ShoppingCartItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CarteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ShoppingCartId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarteId");
+
+                    b.ToTable("ShoppingCartItems");
                 });
 
             modelBuilder.Entity("bookstore.Models.Autor_Carte", b =>
@@ -143,6 +219,34 @@ namespace bookstore.Migrations
                     b.Navigation("Editura");
                 });
 
+            modelBuilder.Entity("bookstore.Models.OrderItem", b =>
+                {
+                    b.HasOne("bookstore.Models.Carte", "Carte")
+                        .WithMany()
+                        .HasForeignKey("CarteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("bookstore.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Carte");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("bookstore.Models.ShoppingCartItem", b =>
+                {
+                    b.HasOne("bookstore.Models.Carte", "Carte")
+                        .WithMany()
+                        .HasForeignKey("CarteId");
+
+                    b.Navigation("Carte");
+                });
+
             modelBuilder.Entity("bookstore.Models.Autor", b =>
                 {
                     b.Navigation("Autori_Carti");
@@ -156,6 +260,11 @@ namespace bookstore.Migrations
             modelBuilder.Entity("bookstore.Models.Editura", b =>
                 {
                     b.Navigation("Carti");
+                });
+
+            modelBuilder.Entity("bookstore.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

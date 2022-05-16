@@ -1,6 +1,8 @@
 ﻿using bookstore.Data;
 using bookstore.Data.Services;
+using bookstore.Data.Static;
 using bookstore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace bookstore.Controllers
 {
+    [Authorize(Roles = UserRoles.Admin)]
     public class AutoriController : Controller
     {
           private readonly IAutoriService _service;
@@ -17,6 +20,8 @@ namespace bookstore.Controllers
             _service = service;
 
         }
+
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var data = await _service.GetAllAsync();
@@ -37,6 +42,9 @@ namespace bookstore.Controllers
             await _service.AddAsync(autor);
             return RedirectToAction(nameof(Index));
         }
+
+        [AllowAnonymous]
+
 
         public async Task<IActionResult> Details(int id)
         {
