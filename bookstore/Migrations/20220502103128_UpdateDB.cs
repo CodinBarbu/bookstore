@@ -7,10 +7,10 @@ namespace bookstore.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<int>(
+            migrationBuilder.AlterColumn<DateTime>(
                 name: "StartDate",
                 table: "Carti",
-                type: "int",
+                type: "datetime2",
                 nullable: false,
                 oldClrType: typeof(DateTime),
                 oldType: "datetime2");
@@ -23,8 +23,8 @@ namespace bookstore.Migrations
                 table: "Carti",
                 type: "datetime2",
                 nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int");
+                oldClrType: typeof(DateTime),
+                oldType: "datetime2");
         }
     }
 }

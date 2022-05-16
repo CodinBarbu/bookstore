@@ -23,6 +23,5 @@ namespace bookstore.Models
         public int EdituraId { get; set; }
         [ForeignKey("EdituraId")]
         public Editura Editura { get; set; }
-
     }
 }

@@ -1,8 +1,13 @@
 using bookstore.Data;
+using bookstore.Data.Cart;
 using bookstore.Data.Services;
+using bookstore.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -30,6 +35,19 @@ namespace bookstore
             services.AddScoped<IAutoriService, AutoriService>();
             services.AddScoped<IEdituriService, EdituriService>();
             services.AddScoped<ICartiService, CartiService>();
+            services.AddScoped<IOrdersService, OrdersService>();
+            
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped(sc => ShoppingCart.GetShoppingCart(sc));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();
+            services.AddMemoryCache();
+            services.AddSession();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            });
+
             services.AddControllersWithViews();
         }
 
@@ -50,6 +68,10 @@ namespace bookstore
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();
+
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseAuthorization();
 
@@ -60,6 +82,7 @@ namespace bookstore
                     pattern: "{controller=Carte}/{action=Index}/{id?}");
             });
             AppDbInitializer.Seed(app);
+            AppDbInitializer.SeedUsersAndRolesAsync(app).Wait();
           }
     }
 }

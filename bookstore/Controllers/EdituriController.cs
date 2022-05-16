@@ -1,6 +1,8 @@
 ﻿using bookstore.Data;
 using bookstore.Data.Services;
+using bookstore.Data.Static;
 using bookstore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace bookstore.Controllers
 {
+    [Authorize(Roles = UserRoles.Admin)]
     public class EdituriController : Controller
     {
 
@@ -19,6 +22,7 @@ namespace bookstore.Controllers
             _service = service;
 
         }
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var allEdituri = await _service.GetAllAsync();
@@ -35,8 +39,9 @@ namespace bookstore.Controllers
             if (!ModelState.IsValid) return View(editura);
             await _service.AddAsync(editura);
             return RedirectToAction(nameof(Index));
-
         }
+        [AllowAnonymous]
+
         public async Task<IActionResult>Details(int id)
         {
             var edituraDetails = await _service.GetByIdAsync(id);

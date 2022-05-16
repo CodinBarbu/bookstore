@@ -1,5 +1,7 @@
-﻿using bookstore.Models;
+﻿using bookstore.Data.Static;
+using bookstore.Models;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -257,93 +259,139 @@ namespace bookstore.Data
                         new Autor_Carte()
                         {
                             AutorId = 1,
-                            CarteId = 1
+                            CarteId = 11
                         },
                         new Autor_Carte()
                         {
                             AutorId = 3,
-                            CarteId = 1
+                            CarteId = 11
                         },
                         new Autor_Carte()
                         {
                             AutorId = 1,
-                            CarteId = 2
+                            CarteId = 12
                         },
                         new Autor_Carte()
                         {
                             AutorId = 4,
-                            CarteId = 2
+                            CarteId = 12
                         },
                         new Autor_Carte()
                         {
                             AutorId = 1,
-                            CarteId = 3
+                            CarteId = 13
                         },
                         new Autor_Carte()
                         {
                             AutorId = 2,
-                            CarteId = 3
+                            CarteId = 13
                         },
                         new Autor_Carte()
                         {
                             AutorId = 5,
-                            CarteId = 3
+                            CarteId = 13
                         },
                         new Autor_Carte()
                         {
                             AutorId = 2,
-                            CarteId = 4
+                            CarteId = 14
                         },
                         new Autor_Carte()
                         {
                             AutorId = 3,
-                            CarteId = 4
+                            CarteId = 14
                         },
                         new Autor_Carte()
                         {
                             AutorId = 4,
-                            CarteId = 4
+                            CarteId = 14
                         },
                         new Autor_Carte()
                         {
                             AutorId = 2,
-                            CarteId = 5
+                            CarteId = 15
                         },
                         new Autor_Carte()
                         {
                             AutorId = 3,
-                            CarteId = 5
+                            CarteId = 15
                         },
                         new Autor_Carte()
                         {
                             AutorId = 4,
-                            CarteId = 5
+                            CarteId = 15
                         },
                         new Autor_Carte()
                         {
                             AutorId = 5,
-                            CarteId = 5
+                            CarteId = 15
                         },
                         new Autor_Carte()
                         {
                             AutorId = 3,
-                            CarteId = 6
+                            CarteId = 16
                         },
                         new Autor_Carte()
                         {
                             AutorId = 4,
-                            CarteId = 6
+                            CarteId = 16
                         },
                         new Autor_Carte()
                         {
                             AutorId = 5,
-                            CarteId = 6
+                            CarteId = 16
                         },
 
 
                     });
                     context.SaveChanges();
 
+                }
+            }
+        }
+
+        public static async Task SeedUsersAndRolesAsync(IApplicationBuilder applicationBuilder)
+        {
+            using (var serviceScope=applicationBuilder.ApplicationServices.CreateScope())
+            {
+                var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                
+                if(!await roleManager.RoleExistsAsync(UserRoles.Admin))
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+
+                if (!await roleManager.RoleExistsAsync(UserRoles.User))
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+
+                var userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+                string adminUserEmail = "admin@bookstore.com";
+                var adminUser = await userManager.FindByEmailAsync(adminUserEmail);
+                if(adminUser==null)
+                {
+                    var newAdminUser = new ApplicationUser()
+                    {
+                        FullName = "Admin User",
+                        UserName = "admin-user",
+                        Email = adminUserEmail,
+                        EmailConfirmed = true
+
+                    };
+                    await userManager.CreateAsync(newAdminUser, "Coding@1234?");
+                    await userManager.AddToRoleAsync(newAdminUser, UserRoles.Admin);
+                }
+                string appUserEmail = "user@bookstore.com";
+                var appUser = await userManager.FindByEmailAsync(appUserEmail);
+                if (appUser == null)
+                {
+                    var newappUser = new ApplicationUser()
+                    {
+                        FullName = "Application User",
+                        UserName = "app_user",
+                        Email = appUserEmail,
+                        EmailConfirmed = true
+
+                    };
+                    await userManager.CreateAsync(newappUser, "Coding@1234?");
+                    await userManager.AddToRoleAsync(newappUser, UserRoles.User);
                 }
             }
         }
